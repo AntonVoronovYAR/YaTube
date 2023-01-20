@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Технологии{% endblock %}
+{% block content %}
+{% comment %} Колонки с отступом сверху и снизу {% endcomment %}
+<p>
+  <h2>Вот что я умею:</h2>
+</p>
+  <aside class="col-12 col-md-3">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        Python
+      </li>
+      <li class="list-group-item">
+        Django
+      </li>
+      <li class="list-group-item">
+        HTML
+      </li>
+    </ul>
+  </aside>
+  <article class="col-12 col-md-9">
+    <p>Пока все в Django кажется очень трудным, но самостоятельное написание данных страниц - вдохновляет</p>
+  </article>
+  <img src="{% static 'img/django.jpg' %}">
+{% endblock %}
