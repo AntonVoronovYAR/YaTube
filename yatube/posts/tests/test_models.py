@@ -13,7 +13,7 @@ class PostModelTest(TestCase):
         cls.user = User.objects.create_user(username='auth')
         cls.group = Group.objects.create(
             title='Тестовая группа',
-            slug='Тестовый слаг',
+            slug='test-slug',
             description='Тестовое описание',
         )
         cls.post = Post.objects.create(
@@ -22,8 +22,6 @@ class PostModelTest(TestCase):
         )
 
     def test_models_have_correct_object_names(self):
-        """Проверяем, что у моделей корректно работает __str__."""
-        group = PostModelTest.group
-        post = PostModelTest.post
-        self.assertEqual(str(group), 'Тестовая группа')
-        self.assertEqual(str(post), 'Тестовый пост')
+        """Проверяем, что у моделей корректно работает __str__"""
+        self.assertEqual(str(self.group), self.group.title)
+        self.assertEqual(str(self.post), self.post.text)

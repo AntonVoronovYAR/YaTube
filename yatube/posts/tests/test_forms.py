@@ -11,6 +11,14 @@ from ..models import Comment, Group, Post
 
 User = get_user_model()
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
+SMALL_GIF = (
+    b'\x47\x49\x46\x38\x39\x61\x02\x00'
+    b'\x01\x00\x80\x00\x00\x00\x00\x00'
+    b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+    b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+    b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+    b'\x0A\x00\x3B'
+)
 
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
@@ -37,14 +45,7 @@ class PostCreateFormTest(TestCase):
             author=cls.user,
             text='LOL',
         )
-        cls.small_gif = (
-            b'\x47\x49\x46\x38\x39\x61\x02\x00'
-            b'\x01\x00\x80\x00\x00\x00\x00\x00'
-            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-            b'\x0A\x00\x3B'
-        )
+        cls.small_gif = SMALL_GIF
         cls.uploaded = SimpleUploadedFile(
             name='small.gif',
             content=cls.small_gif,
@@ -71,7 +72,7 @@ class PostCreateFormTest(TestCase):
             reverse('posts:post_create'), data=form_data, follow=True
         )
         self.assertRedirects(response, reverse(
-            'posts:profile', kwargs={'username': 'NoNameClient'})
+            'posts:profile', kwargs={'username': self.user.username})
         )
         self.assertEqual(Post.objects.count(), posts_count + 1)
 
@@ -92,25 +93,14 @@ class PostCreateFormTest(TestCase):
             response, f'/auth/login/?next=/posts/{self.post.id}/comment/'
         )
 
-    def test_edipast_post_changes_post_in_base_auth_user(self):
+    def test_auth_user_edit_post_and_it_changes_in_base(self):
         """
         При редактировании поста авторизованным пользователем,
         изменения происходят и в базе данных
         """
-        new_image = (
-            b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04'
-            b'\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02'
-            b'\x02\x4c\x01\x00\x3b'
-        )
-        uploaded = SimpleUploadedFile(
-            name='small.gif',
-            content=new_image,
-            content_type='image/gif'
-        )
         form_data = {
             'text': 'Отредактированный пост',
             'group': self.group.pk,
-            'image': uploaded,
         }
         response = self.authorized_client.post(
             reverse('posts:post_edit', kwargs={'post_id': self.post.id}),

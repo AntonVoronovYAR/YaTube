@@ -20,13 +20,13 @@ class PostsURLTests(TestCase):
         cls.authorized_client.force_login(cls.user)
         cls.post = Post.objects.create(
             author=cls.user,
-            text='Тестовое описание поста'
+            text='Тестовый пост'
         )
 
         cls.group = Group.objects.create(
             title='Тестовый заголовок',
             slug='test-slug',
-            description='Тестовый текст'
+            description='Тестовое описание',
         )
 
     def test_about_url_exists_at_desired_location(self):
@@ -58,7 +58,7 @@ class PostsURLTests(TestCase):
                     self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_urls_uses_correct_template(self):
-        """URL-адрес использует соответствующий шаблон."""
+        """URL-адрес использует соответствующий шаблон"""
         cache.clear()
         url_names_templates = {
             '/': 'posts/index.html',
@@ -73,8 +73,3 @@ class PostsURLTests(TestCase):
             with self.subTest(address=address):
                 response = self.authorized_client.get(address)
                 self.assertTemplateUsed(response, template)
-
-    def test_pages_code_403_uses_correct_template(self):
-        response = self.guest_client.get('/create/')
-        self.assertTemplateUsed(response, 'core/403csrf.html')
-

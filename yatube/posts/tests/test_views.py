@@ -14,6 +14,14 @@ from ..models import Comment, Follow, Post, Group
 User = get_user_model()
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 PAGINATOR_POSTS_LEN: int = 10
+SMALL_GIF = (
+    b'\x47\x49\x46\x38\x39\x61\x02\x00'
+    b'\x01\x00\x80\x00\x00\x00\x00\x00'
+    b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+    b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+    b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+    b'\x0A\x00\x3B'
+)
 
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
@@ -27,16 +35,9 @@ class PostsPagesTest(TestCase):
         cls.group = Group.objects.create(
             title='Тестовый заголовок',
             slug='test-slug',
-            description='Тестовый текст'
+            description='Тестовое описание'
         )
-        small_gif = (
-            b'\x47\x49\x46\x38\x39\x61\x02\x00'
-            b'\x01\x00\x80\x00\x00\x00\x00\x00'
-            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-            b'\x0A\x00\x3B'
-        )
+        small_gif = SMALL_GIF
         cls.uploaded = SimpleUploadedFile(
             name='small.gif',
             content=small_gif,
@@ -44,7 +45,7 @@ class PostsPagesTest(TestCase):
         )
         cls.post = Post.objects.create(
             author=cls.user,
-            text='Тестовое описание поста',
+            text='Тестовый пост',
             group=cls.group,
             image=cls.uploaded,
         )
@@ -91,7 +92,7 @@ class PostsPagesTest(TestCase):
         self.assertEqual(list(response.context['page_obj']), expected)
 
     def test_group_list_show_correct_context(self):
-        """Список постов в шаблоне group_list равен ожидаемому контексту."""
+        """Список постов в шаблоне group_list равен ожидаемому контексту"""
         response = self.authorized_client.get(
             reverse('posts:group_list', kwargs={'slug': self.group.slug})
         )
@@ -109,7 +110,7 @@ class PostsPagesTest(TestCase):
         self.assertEqual(list(response.context['page_obj']), expected)
 
     def test_post_detail_show_correct_context(self):
-        """Шаблон post_detail сформирован с правильным контекстом."""
+        """Шаблон post_detail сформирован с правильным контекстом"""
         response = self.authorized_client.get(
             reverse('posts:post_detail', kwargs={'post_id': self.post.id})
         )
@@ -121,15 +122,12 @@ class PostsPagesTest(TestCase):
     def test_post_create_and_post_edit_show_correct_context(self):
         """
         Шаблон post_create и post_edit
-        сформирован с правильным контекстом.
+        сформирован с правильным контекстом
         """
         responses = (
             self.authorized_client.get(reverse('posts:post_create')),
             self.authorized_client.get(
-                reverse('posts:post_edit', kwargs={
-                    'post_id': self.post.id
-                })
-            )
+                reverse('posts:post_edit', kwargs={'post_id': self.post.id}))
         )
         form_fields = {
             'text': forms.fields.CharField,
@@ -243,19 +241,16 @@ class FollowViewsTest(TestCase):
             'posts:profile_follow',
             kwargs={'username': self.another_user.username})
         )
-        self.assertTrue(
-            Follow.objects.filter(
-                user=self.user,
-                author=self.another_user).exists()
+        self.assertTrue(Follow.objects.filter(
+            user=self.user,
+            author=self.another_user).exists()
         )
         self.authorized_client.get(reverse(
             'posts:profile_unfollow',
             kwargs={'username': self.another_user.username}))
-        self.assertFalse(
-            Follow.objects.filter(
-                user=self.user,
-                author=self.another_user
-            ).exists()
+        self.assertFalse(Follow.objects.filter(
+            user=self.user,
+            author=self.another_user).exists()
         )
 
     def test_new_post_doesnt_shown_to_follower(self):
