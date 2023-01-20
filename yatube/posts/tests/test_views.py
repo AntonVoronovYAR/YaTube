@@ -253,6 +253,15 @@ class FollowViewsTest(TestCase):
             author=self.another_user).exists()
         )
 
+    def test_authorized_client_follow_and_unfollow(self):
+        """Подписаться на пользователя можно 1 раз"""
+        for _ in range(2):
+            self.authorized_client.get(reverse(
+                'posts:profile_follow',
+                kwargs={'username': self.another_user.username}))
+        follow_count = self.user.follower.count()
+        self.assertEqual(follow_count, 1)
+
     def test_new_post_doesnt_shown_to_follower(self):
         """
         Новая запись пользователя не появляется
