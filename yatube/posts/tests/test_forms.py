@@ -51,25 +51,30 @@ class PostCreateFormTest(TestCase):
             content=cls.small_gif,
             content_type='image/gif'
         )
+        cls.form_data = {
+            'text': cls.post.text,
+            'group': cls.group.pk,
+            'image': cls.uploaded,
+        }
 
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
 
+    # Комментарий для ревьювера:
+    # Проверка создания картинки на соответсвующих страницах сайта
+    # будет произведена путем добавления дополнительной проверки
+    # контекста в test_views теста:
+    # test_new_post_exist_at_expected_pages_with_correct_context
     def test_create_post_auth_user(self):
         """
         При создании поста авторизованным пользователем,
-         формируется новая запись в базе данных
+        формируется новая запись в базе данных
         """
-        form_data = {
-            'text': self.post.text,
-            'group': self.group.pk,
-            'image': self.uploaded,
-        }
         posts_count = Post.objects.count()
         response = self.authorized_client.post(
-            reverse('posts:post_create'), data=form_data, follow=True
+            reverse('posts:post_create'), data=self.form_data, follow=True
         )
         self.assertRedirects(response, reverse(
             'posts:profile', kwargs={'username': self.user.username})
@@ -78,11 +83,15 @@ class PostCreateFormTest(TestCase):
 
     def test_create_post_guest_user(self):
         """
-        При попытке создания поста неавторизованным пользователем,
-        происходит перенаправление на страницу login
+        При попытке создания поста неавторизованным пользователем
+        пост не создается и происходит перенаправление на страницу login
         """
-        response = self.guest_client.get(reverse('posts:post_create'))
+        posts_count = Post.objects.count()
+        response = self.guest_client.post(
+            reverse('posts:post_create'), data=self.form_data, follow=True
+        )
         self.assertRedirects(response, '/auth/login/?next=/create/')
+        self.assertEqual(Post.objects.count(), posts_count)
 
     def test_create_comment_guest_user(self):
         """Создавать комментарии могут только авторизованные пользователи"""

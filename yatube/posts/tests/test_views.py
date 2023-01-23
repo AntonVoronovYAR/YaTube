@@ -140,10 +140,10 @@ class PostsPagesTest(TestCase):
                     form_field = response.context['form'].fields[value]
                     self.assertIsInstance(form_field, expected)
 
-    def test_new_post_exist_at_expected_pages(self):
+    def test_new_post_exist_at_expected_pages_with_correct_context(self):
         """
         Новый пост появляется на главной странице,
-        странице группы и в профиле
+        странице группы и в профиле с правильным контекстом
         """
         cache.clear()
         responses = (
@@ -155,10 +155,15 @@ class PostsPagesTest(TestCase):
                 reverse('posts:profile', kwargs={'username': self.post.author})
             )
         )
-        expected = self.post
         for response in responses:
-            post_object = response.context['post']
-            self.assertEqual(post_object, expected)
+            context = {
+                response.context['post'].text: self.post.text,
+                response.context['post'].group: self.post.group,
+                response.context['post'].image: self.post.image
+            }
+            for post_object, expected in context.items():
+                with self.subTest(post_object=post_object):
+                    self.assertEqual(post_object, expected)
 
     def test_new_comment_exist_at_post_detail_page(self):
         """Новый комментарий появляется на странице информации о посте"""

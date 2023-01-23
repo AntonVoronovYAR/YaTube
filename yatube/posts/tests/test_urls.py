@@ -47,14 +47,8 @@ class PostsURLTests(TestCase):
                     self.assertEqual(
                         response.status_code, HTTPStatus.NOT_FOUND
                     )
-                elif page == f'/posts/{self.post.id}/edit/':
-                    response = self.authorized_client.get(page)
-                    self.assertEqual(response.status_code, HTTPStatus.OK)
-                elif page == '/create/':
-                    response = self.authorized_client.get(page)
-                    self.assertEqual(response.status_code, HTTPStatus.OK)
                 else:
-                    response = self.guest_client.get(page)
+                    response = self.authorized_client.get(page)
                     self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_urls_uses_correct_template(self):

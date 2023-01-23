@@ -9,7 +9,7 @@ from .models import Follow, Post, Group, User
 
 @cache_page(20, key_prefix='index_page')
 def index(request):
-    posts = Post.objects.order_by('pub_date')
+    posts = Post.objects.order_by('-pub_date')
     context = {
         'page_obj': paginator_create(request, posts),
         'posts': posts,
@@ -73,7 +73,7 @@ def post_create(request):
 @login_required
 def post_edit(request, post_id):
     template = 'posts/create_post.html'
-    post = get_object_or_404(Post, pk=post_id)
+    post = get_object_or_404(Post, id=post_id)
     form = PostForm(
         request.POST or None,
         files=request.FILES or None,
