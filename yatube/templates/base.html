@@ -1,30 +1,32 @@
 {% load static %}
-<!DOCTYPE html>
 <html lang="ru">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="img/fav/fav.ico" type="image">
-    <link rel="apple-touch-icon" sizes="180x180" href="img/fav/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="img/fav/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="img/fav/favicon-16x16.png">
     <meta name="msapplication-TileColor" content="#000">
     <meta name="theme-color" content="#ffffff">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <title>
       {% block title %}
       Записи сообщества: {{ group.title }}
       {% endblock %}
     </title>
+    <div class="container py-6">
+      <marquee scrollamount="10" style="color: #00BFFF;
+      font-size: 40px;
+      font-weight: bolder;
+      line-height: 150%;
+      text-shadow: #000000 0px 1px 1px;">
+      Здесь могла быть ваша реклама &#129315;
+      </marquee>
     <a href="{% url 'posts:main_page' %}">
-      <h3>
-        Главная страница
-      </h3>
+      <h3>Главная страница</h3>
     </a>
+    </div>
   </head>
-  <body>
+  <body style="background-color: #DCDCDC">
+    <div class="container py-6">
     <h1>{{ text }}</h1>
     <header>
       {% include 'includes/header.html' %}
@@ -37,5 +39,6 @@
     <footer>
       {% include 'includes/footer.html' %}
     </footer>
+  </div>
   </body>
 </html>

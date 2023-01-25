@@ -4,43 +4,47 @@
   <div class="container">
     <a class="navbar-brand" href="{% url 'posts:main_page' %}">
       <img src="{% static 'img/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
-      <span style="color:red">Ya</span>tube
+      <span style="color:red"><b>Ya</b></span>tube
     </a>
     <ul class="nav nav-pills">
       <li class="nav-item">
-        <a class="nav-link {% if view_name  == 'about:author' %}active{% endif %}"
-          href="{% url 'about:author' %}">Об авторе</a>
+        <h5><a class="nav-link">Всего постов на сайте: {{ posts_count }}</a></h5>
+      <li class="nav-item">
+        <h5><a class="nav-link {% if view_name  == 'about:author' %}active{% endif %}"
+          href="{% url 'about:author' %}">Об авторе</a></h5>
       </li>
       <li class="nav-item">
-        <a class="nav-link {% if view_name  == 'about:tech' %}active{% endif %}"
-          href="{% url 'about:tech' %}">Технологии</a>
+        <h5><a class="nav-link {% if view_name  == 'about:tech' %}active{% endif %}"
+          href="{% url 'about:tech' %}">Технологии</a></h5>
       </li>
       {% if request.user.is_authenticated %}
       <li class="nav-item">
-        <a class="nav-link {% if view_name  == 'posts:post_create' %}active{% endif %}"
-           href="{% url 'posts:post_create' %}">Новая запись</a>
+        <h5><a class="nav-link {% if view_name  == 'posts:post_create' %}active{% endif %}"
+           href="{% url 'posts:post_create' %}">Новая запись</a></h5>
       </li>
       <li class="nav-item">
-        <a class="nav-link link-light" href="#">Изменить пароль</a>
+        <h5><a class="nav-link" href="#">Изменить пароль</a></h5>
       </li>
       <li class="nav-item">
-        <a class="nav-link {% if view_name  == 'users:logout' %}active{% endif %}"
-           href="{% url 'users:logout' %}">Выйти</a>
+        <h5><a class="nav-link {% if view_name  == 'users:logout' %}active{% endif %}"
+           href="{% url 'users:logout' %}">Выйти</a></h5>
       </li>
-      <li class="nav-item">
-        Пользователь: {{ user.username }}
+      <li class="nav-link">
+        <h5><p><b>Пользователь: {{ user.username }}</b></p></h5>
       </li>
       {% else %}
+      <ul class="nav nav-pills">
       <li class="nav-item">
-        <a class="nav-link link-light {% if view_name  == 'users:login' %}active{% endif %}"
-           href="{% url 'users:login' %}">Войти</a>
+        <h5><a class="nav-link link-light {% if view_name  == 'users:login' %}active{% endif %}"
+           href="{% url 'users:login' %}">Войти</a></h5>
       </li>
       <li class="nav-item">
-        <a class="nav-link link-light {% if view_name  == 'users:signup' %}active{% endif %}"
-           href="{% url 'users:signup' %}">Регистрация</a>
+        <h5><a class="nav-link link-light {% if view_name  == 'users:signup' %}active{% endif %}"
+           href="{% url 'users:signup' %}">Регистрация</a></h5>
       </li>
       {% endif %}
     </ul>
+  </ul>
   </div>
 </nav>
 {% endwith %}

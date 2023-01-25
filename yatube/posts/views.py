@@ -7,12 +7,14 @@ from .utils import paginator_create
 from .models import Follow, Post, Group, User
 
 
-@cache_page(20, key_prefix='index_page')
+@cache_page(2, key_prefix='index_page')
 def index(request):
     posts = Post.objects.order_by('-pub_date')
+    posts_count = Post.objects.count()
     context = {
         'page_obj': paginator_create(request, posts),
         'posts': posts,
+        'posts_count': posts_count,
     }
     return render(request, 'posts/index.html', context)
 
@@ -30,7 +32,7 @@ def group_posts(request, slug):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    post_list = Post.objects.filter(author=author).all()
+    post_list = Post.objects.filter(author=author).order_by('-pub_date')
     following = (
         request.user != author
         and request.user.is_authenticated

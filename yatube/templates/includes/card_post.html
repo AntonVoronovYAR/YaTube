@@ -1,18 +1,46 @@
 {% load thumbnail %}
-<ul>
+<div class="container py-2" style="border:5px #A9A9A9 ridge">
+<style>
+.list-rectangle {
+list-style: none;
+margin: 0;
+padding: 0;
+}
+.list-rectangle>li {
+position: relative;
+display: block;
+margin-bottom: .25rem;
+padding: .325rem .825rem .325rem 1.325rem;
+color: #808000;
+}
+.list-rectangle>li:last-child {
+margin-bottom: 0;
+}
+.list-rectangle>li::before {
+content: "";
+position: absolute;
+left: 0;
+top: 0;
+bottom: 0;
+width: 0.5rem;
+background: lightskyblue;
+}
+</style>
+<ul class="list-rectangle">
     <li>
-        Автор: {{ post.author.get_full_name }}
-        <a href="{% url 'posts:profile' post.author %}">Все посты пользователя</a>
+        <h6>Автор: {{ post.author.get_full_name }}
+        <a href="{% url 'posts:profile' post.author %}">Все посты пользователя</a></h6>
     </li>
     <li>
-        Дата публикации: {{ post.pub_date|date:"d E Y" }}
-        <a href="{% url 'posts:post_detail' post.id %}">Подробная информация</a>
+        <h6>Дата публикации: {{ post.pub_date|date:"d E Y" }}
+        <a href="{% url 'posts:post_detail' post.id %}">Подробная информация</a></h6>
     </li>
 </ul>
 <p>{{ post.text }}</p>
 {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
   <img class="card-img my-2" src="{{ im.url }}">
 {% endthumbnail %}
-  {% if post.group %}
-      <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>
-  {% endif %}
+{% if post.group %}
+<h6><a href="{% url 'posts:group_list' post.group.slug %}">Все записи группы {{post.group.title}}</a></h6>
+{% endif %}
+</div>
